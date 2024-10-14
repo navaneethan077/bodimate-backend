@@ -5,7 +5,10 @@ import {
     logoutUser,
     registerUser,
     resetPassword, updateUser,
-    verifyOTP
+    verifyOTP,
+    getAllUsers,
+    getUserProfile,
+    updateUserProfile
 } from '../controllers/userController.js';
 import {protect} from "../middleware/authMiddleware.js";
 
@@ -20,6 +23,8 @@ router.route('/logout').get(logoutUser);
 router.route('/forgotPassword').post(forgotPassword);
 router.route('/resetPassword').post(resetPassword);
 router.put('/update/:id', protect, updateUser);
+router.route('/allprofile').get(getAllUsers);
+router.route('/:id/profile').get(getUserProfile).put(updateUserProfile);
 
 
 export default router;

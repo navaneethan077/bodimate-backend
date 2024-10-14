@@ -46,6 +46,9 @@ const userSchema = new mongoose.Schema({
     profilePic: {
         type: String,
     },
+    dob: {
+        type: String,
+    },
     isVerified: {
         type: Boolean,
         default: false
