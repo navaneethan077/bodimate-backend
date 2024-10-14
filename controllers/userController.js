@@ -11,6 +11,7 @@ const registerUser = asyncHandler(async (req, res) => {
         lastName,
         email,
         password,
+        username,
         role,
         contactNo,
         gender,
@@ -33,6 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
         password,
         role,
         contactNo,
+        username,
         gender,
         address,
         nicNo,
@@ -43,14 +45,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }).then((user) => {
         //sendOTP(user, res)
 
-        res.status(201).json({
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-            contactNo: user.contactNo
-        })
+        res.status(201).json(user)
     }).catch((error) => {
         res.status(400).json({status: "FAILED", message: error});
 
@@ -167,11 +162,12 @@ const loginUser = asyncHandler(async (req, res) => {
         let token = generateToken(res, user._id);
         res.status(200).json({
             _id: user._id,
+            username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             role: user.role,
-            contactNo: user.contact,
+            contactNo: user.contactNo,
             gender: user.gender,
             address: user.address,
             nicNo: user.nicNo,
@@ -306,58 +302,18 @@ const getUserProfile = asyncHandler(async (req, res) => {
         throw new Error('User not found');
     }
 });
+
+
 const getAllUsers = asyncHandler(async (req, res) => {
-
-    try {
-        const users = await User.find({});
-        res.json(users);
-    } catch (err) {
-        console.error('Failed to fetch users from MongoDB:', err);
-        res.status(500).send('Failed to fetch users from MongoDB');
-    }
-});
-const updateUserProfile = asyncHandler(async (req, res) => {
-    let _id = req.params.id
-    const user = await User.findById(_id)
-    if (user) {
-        user.firstName = req.body.firstName || user.firstName;
-        user.lastName = req.body.lastName || user.lastName;
-        user.email = req.body.email || user.email;
-        user.role = req.body.role || user.role;
-        user.contactNo = req.body.contactNo || user.contactNo;
-        user.gender = req.body.gender || user.gender;
-        user.address = req.body.address || user.address;
-        user.nicNo = req.body.nicNo || user.nicNo;
-        user.dob = req.body.dob || user.dob;
-        user.profilePic = req.body.profilePic || user.profilePic;
-        
-
-        if (req.body.password) {
-            user.password = req.body.password;
-        }
-
-
-        const updatedUser = await user.save();
-
-        res.json({
-            _id: updatedUser._id,
-            firstName: updatedUser.firstName,
-            lastName: updatedUser.lastName,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            contactNo: updatedUser.contact,
-            gender: updatedUser.gender,
-            address: updatedUser.address,
-            nicNo: updatedUser.nicNo,
-            dob:updatedUser.dob,
-            profilePic: updatedUser.profilePic,
-        });
+    const users = await User.find({ _id: { $ne: "6706daa45592c323718263b7" } });
+    if(users){
+        res.status(200).json(users);
     } else {
-        res.status(404);
-        throw new Error('User not found');
+        res.status(400).json({status: "FAILED", message: "No users found"});
     }
-});
+})
 
 
-export {registerUser, verifyOTP, loginUser, logoutUser, forgotPassword, resetPassword,updateUser,getUserProfile,getAllUsers,updateUserProfile}
+export {registerUser, verifyOTP, loginUser, logoutUser, forgotPassword, resetPassword,updateUser,getAllUsers,getUserProfile}
+
 
